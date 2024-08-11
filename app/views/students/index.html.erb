@@ -1,13 +1,9 @@
 <div class="container mt-5">
-  <h1 class="text-center">tailwebs.</h1>
   <div class="d-flex justify-content-between align-items-center">
     <h2 class="mb-4">Student List</h2>
-    <%= link_to "Add Student", new_student_path, class: "btn btn-dark" %>
-    <%= button_tag "Add Student-model", id: "addStudentBtn", class: "btn btn-dark", data: { toggle: "modal", target: "#studentModal" } %>
-    <%# <%= button_tag(type: 'button', class: 'dropdown-item', data: { bs_toggle: 'modal', bs_target: '#studentModal'}) do %>
-      <%# Add Student %>
-    <%# <% end %>
+    <%= button_tag "Add Student", id: "addStudentBtn", class: "btn btn-dark" %>
   </div>
+
   <table class="table table-hover">
     <thead>
       <tr>
@@ -29,9 +25,7 @@
                 <i class="bi bi-three-dots"></i>
               </button>
               <ul class="dropdown-menu" aria-labelledby="actionMenuButton<%= student.id %>">
-                <li><%= link_to 'Edit-working', edit_student_path(student) %></li>
-                <li><a class="dropdown-item" href="#studentModal" data-bs-toggle="modal" data-student-id="<%= student.id %>">Edit</a></li>
-                <li><%= link_to 'Edit-1', '#studentModal', class: 'dropdown-item', data: { bs_toggle: 'modal', student_id: student.id }, remote: true %></li>
+                <li><%= link_to 'Edit', '#', class: 'dropdown-item edit-student-btn', data: { student_id: student.id } %></li>
                 <li><%= link_to 'Delete', student, method: :delete, data: { confirm: 'Are you sure?' }, class: "dropdown-item" %></li>
               </ul>
             </div>
@@ -42,4 +36,178 @@
   </table>
 </div>
 
-<%= render 'students/modal' %>
+<div id="simpleModal" class="modal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h5 class="modal-title" id="studentModalLabel">Student Details</h5>
+      <span type="button" class="close-button" id="closeModal">&times;</span>
+    </div>
+    <div class="modal-body">
+      <%= form_with(url: students_update_path, method: :put, id: "modalForm", local: true) do |form| %>
+        <%= hidden_field_tag 'student[id]', nil, id: "modalStudentId" %>
+
+        <div class="mb-3">
+          <%= form.label :name, "Student Name" %>
+          <%= form.text_field 'student[name]', class: "form-control", id: "modalStudentName"%>
+        </div>
+        <div class="mb-3">
+          <%= form.label :subject, "Subject" %>
+          <%= form.text_field 'student[subject_name]', class: "form-control", id: "modalStudentSubject" %>
+        </div>
+        <div class="mb-3">
+          <%= form.label :mark, "Mark" %>
+          <%= form.number_field 'student[marks]', class: "form-control", id: "modalStudentMark" %>
+        </div>
+        <div class="modal-footer">
+        <button type="button" id="closeModalBtn" class="btn btn-secondary">Back</button>
+        <button type="submit" class="btn btn-primary">Save changes</button>
+      </div>
+      <% end %>
+    </div>
+  </div>
+</div>
+
+<div id="addStudentModal" class="modal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h5 class="modal-title" id="addStudentModalLabel">Add New Student</h5>
+      <span type="button" class="close-button" id="closeAddModal">&times;</span>
+    </div>
+    <div class="modal-body">
+      <%= form_with(url: students_path, method: :post, id: "addStudentForm", local: true) do |form| %>
+        <div class="mb-3">
+          <%= form.label :name, "Student Name" %>
+          <%= form.text_field 'student[name]', class: "form-control", id: "addStudentName"%>
+        </div>
+        <div class="mb-3">
+          <%= form.label :subject_name, "Subject" %>
+          <%= form.text_field 'student[subject_name]', class: "form-control", id: "addStudentSubject" %>
+        </div>
+        <div class="mb-3">
+          <%= form.label :marks, "Mark" %>
+          <%= form.number_field 'student[marks]', class: "form-control", id: "addStudentMark" %>
+        </div>
+        <div class="modal-footer">
+          <button type="button" id="closeAddModalBtn" class="btn btn-secondary">Back</button>
+          <button type="submit" class="btn btn-primary">Add Student</button>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>
+
+<style>
+  .modal {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.5);
+  }
+
+  .modal-content {
+    background-color: #fefefe;
+    margin: 15% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
+  }
+
+  .modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .close-button {
+    color: #aaa;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+  }
+
+  .close-button:hover {
+    color: black;
+  }
+
+  .modal-footer {
+    display: flex;
+    justify-content: flex-end;
+  }
+</style>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    var studentModal = document.getElementById('simpleModal');
+    var addStudentModal = document.getElementById('addStudentModal');
+    var closeButton = document.getElementById('closeModal');
+    var closeModalBtn = document.getElementById('closeModalBtn');
+    var closeAddModal = document.getElementById('closeAddModal');
+    var closeAddModalBtn = document.getElementById('closeAddModalBtn');
+
+    document.querySelectorAll('.edit-student-btn').forEach(function(button) {
+      button.addEventListener('click', function(event) {
+        event.preventDefault();
+        var studentId = this.getAttribute('data-student-id');
+        document.getElementById('modalStudentId').value = studentId;
+
+        fetch(`/students/${studentId}/edit`, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json"
+            }
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(data => {
+            document.getElementById('modalStudentName').value = data.name;
+            document.getElementById('modalStudentSubject').value = data.subject_name;
+            document.getElementById('modalStudentMark').value = data.marks;
+        })
+        .catch(error => {
+            console.error('There was a problem with the fetch operation:', error);
+        });
+
+        studentModal.style.display = 'block';
+      });
+    });
+
+    document.getElementById('addStudentBtn').addEventListener('click', function(event) {
+      event.preventDefault();
+      addStudentModal.style.display = 'block';
+    });
+
+    closeButton.onclick = function() {
+      studentModal.style.display = 'none';
+    };
+
+    closeModalBtn.onclick = function() {
+      studentModal.style.display = 'none';
+    };
+
+    closeAddModalBtn.onclick = function() {
+      addStudentModal.style.display = 'none';
+    };
+
+    closeAddModal.onclick = function() {
+      addStudentModal.style.display = 'none';
+    };
+
+    window.onclick = function(event) {
+      if (event.target == studentModal) {
+        studentModal.style.display = 'none';
+      }
+      if (event.target == addStudentModal) {
+        addStudentModal.style.display = 'none';
+      }
+    };
+  });
+</script>

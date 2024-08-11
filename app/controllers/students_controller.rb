@@ -32,23 +32,8 @@ class StudentsController < ApplicationController
   end
 
   def edit
-    # binding.pry
     @student = Student.find(params[:id])
-    # respond_to do |format|
-    #   format.json { render json: @student }
-    #   format.html # fallback in case of direct access
-    # end
-    # respond_to do |format|
-    #   format.js
-    # end
-  end
-
-  def open_student_model
-    binding.pry
-    @student = Student.find(params[:id])
-    respond_to do |format|
-      format.js
-    end
+    render json: {name: "#{@student.name}", subject_name: "#{@student.subject_name}", marks: "#{@student.marks}"}
   end
 
   def update
@@ -69,7 +54,11 @@ class StudentsController < ApplicationController
   private
 
   def set_student
-    @student = current_teacher.students.find(params[:id])
+    if params["action"] == "update"
+      @student = current_teacher.students.find(params[:student][:id])
+    else
+      @student = current_teacher.students.find(params[:id])
+    end
   end
 
   def student_params

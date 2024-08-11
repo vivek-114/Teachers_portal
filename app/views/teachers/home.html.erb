@@ -1,4 +1,25 @@
+<header class="navbar navbar-light bg-light px-3">
+    <a class="navbar-brand" href="#"><span style="color: #dc3545; font-weight: bold;">tailwebs.</span></a>
+    <div class="d-flex align-items-center">
+        <%= link_to 'Logout', logout_path, method: :delete, class: "nav-link" %>
+    </div>
+</header>
 
-<%= button_to 'Sign out', logout_path, method: :delete, class: 'btn btn-danger' %>
+<div class="background">
+    <%= render template: 'students/index' %>
+<div>
 
-<%= render template: 'students/index' %>
+<style>
+    .home-header h1 {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            color: #dc3545;
+        }
+    
+    .background {
+        background-color: #cec9c9;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+</style>

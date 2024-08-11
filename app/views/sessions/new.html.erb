@@ -53,11 +53,6 @@
             padding: 0.75rem 1.25rem;
             font-size: 1rem;
         }
-        .forgot-password {
-            text-align: right;
-            margin-bottom: 1rem;
-            font-size: 0.875rem;
-        }
     </style>
 </head>
 <body>
@@ -78,9 +73,6 @@
                     <%= f.password_field :password, placeholder: "Enter Password", class: "form-control" %>
                     <button class="btn btn-outline-secondary" type="button"><i class="bi bi-eye"></i></button>
                 </div>
-            </div>
-            <div class="forgot-password">
-                <%= link_to "Forgot Password?", "#" %>
             </div>
             <%= f.submit "Login", class: "btn btn-dark w-100" %>
         <% end %>

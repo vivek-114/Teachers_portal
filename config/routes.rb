@@ -1,15 +1,6 @@
 Rails.application.routes.draw do
-  get 'students/index'
-  get 'students/new'
-  get 'students/create'
-  get 'students/open_student_model'
-  get 'students/edit'
   get 'students/update'
-  get 'students/destroy'
-  get 'teachers/home'
-  # get 'sessions/new'
-  # get 'sessions/create'
-  # get 'sessions/destroy'
+  resources :students, only: [:index, :edit, :update, :create, :destroy]
 
   root 'sessions#new'
   
