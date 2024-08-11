@@ -23,7 +23,7 @@ Prerequisites
 Setup Instructions
 
 1. Clone the Repository
-   git clone https://github.com/yourusername/teachers_portal.git
+   git clone https://github.com/vivek-114/Teachers_portal.git
    cd teachers_portal
 2. Install Dependencies
    bundle install
